@@ -18,14 +18,17 @@
     <body>
         <div id="map_overlap"></div>
         <script lang="javascript">
-            function onMapClick(e) {
-                const { latlng } = e;
-                const circle = L.circle([latlng.lat, latlng.lng], {
+            function createCircle(mymap, lat, lng) {
+                const circle = L.circle([lat, lng], {
                     color: 'red',
                     fillColor: '#f03',
-                    fillOpacity: 0.2,
+                    fillOpacity: 0.1,
                     radius: 15000
                 }).addTo(mymap);
+            }
+            function onMapClick(e) {
+                const { latlng } = e;
+                createCircle(mymap, latlng.lat, latlng.lng)
                 const searchParams = new URLSearchParams(window.location.search);
                 searchParams.append('circle', JSON.stringify(latlng));
                 const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
@@ -38,9 +41,16 @@
                 id: 'mapbox/streets-v11',
                 tileSize: 512,
                 zoomOffset: -1,
-                accessToken: 'pk.eyJ1IjoiZG1pbGxpbmd0b24iLCJhIjoiY2t1ZG5yNXV3MWNobDMzbzh1NzQ3ZTZoaCJ9.3PC-WoCOL01J_v6AY0FFRA'
+                accessToken: 'pk.eyJ1IjoiZG1pbGxpbmd0b24iLCJhIjoiY2t1ZG95em12MWNuYzJ2bzMwMzB6OGt5YiJ9.B8oiN-X_dDCg5DJ85FZv5Q'
             }).addTo(mymap);
             mymap.on('click', onMapClick);
+
+            const searchInit = new URLSearchParams(window.location.search);
+            const circles = searchInit.getAll('circle');
+            for(const circle of circles) {
+                const { lat, lng} = JSON.parse(circle);
+                createCircle(mymap, lat, lng);
+            }
         </script>
     </body>
 </html>
